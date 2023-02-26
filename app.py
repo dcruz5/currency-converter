@@ -5,20 +5,29 @@ from dotenv import load_dotenv
 load_dotenv()
 
 API_KEY = os.getenv('API_KEY')
-URL = f'https://api.apilayer.com/currency_data/list' 
+URL = f'https://api.apilayer.com/currency_data/' 
  
 headers = {'apikey': API_KEY}
-r = requests.get(URL, headers=headers)
+response = requests.get(f'{URL}list', headers=headers)
 
-print(r.json())
+currencies = response.json()['currencies']
 
-print('Welcome to ConvertMyMoney!')
 
-# Print list of currencies to convert
+print('Welcome to ConvertYourMoney!\n')
 
-base_currency = input('Base Currency: ')
-to_currency = input('To Currency: ')
+print('Available currencies: ')
+for code, currency  in currencies.items():
+    print( code, ":", currency)
+    
+    
+base = input('Base Currency: ')
+to = input('To Currency: ')
 amount = float(input('Amount: '))
 
 
+convert_request = requests.get(f'{URL}convert?to={to}&from={base}&amount={amount}', headers=headers)
+
+result = convert_request.json()['result']
+
+print(f'{amount}{base} is {result}{to}.')
 
